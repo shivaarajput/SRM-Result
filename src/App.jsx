@@ -169,7 +169,11 @@ export default function App() {
     const suffix = (loginData.studentIndex + 1).toString().padStart(2, '0');
     const myRegNo = `RA25322410300${suffix}`;
     const myRankIndex = leaderboard.findIndex(u => u.regNo === myRegNo);
-    const topPercent = myRankIndex !== -1 ? Math.ceil(((myRankIndex + 1) / leaderboard.length) * 100) : 0;
+    const percentile = myRankIndex !== -1
+      ? Math.ceil(((leaderboard.length - myRankIndex - 1) / leaderboard.length) * 100)
+      : 0;
+
+    const topPercent = percentile; // backward compatibility
     return { avg, topPercent };
   }, [leaderboard, loginData.studentIndex]);
 
