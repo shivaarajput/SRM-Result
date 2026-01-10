@@ -5,7 +5,6 @@ import { getFirestore, collection, doc, setDoc, onSnapshot, query, orderBy, getD
 import { Trophy, GraduationCap, Edit3, Calculator, Zap, CheckCircle, XCircle, Loader, Heart, Crown, Search, ShieldCheck, ArrowRight, Medal, Grid, User } from 'lucide-react';
 
 // --- Firebase Configuration ---
-// Ensure these environment variables are set in your project
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -87,7 +86,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   
   // App State
-  const [step, setStep] = useState('login'); // login, subjects, result
+  const [step, setStep] = useState('login'); 
   const [loginData, setLoginData] = useState({ name: '', regNo: '', studentIndex: -1 });
   const [grades, setGrades] = useState(() => {
     const defaults = {};
@@ -101,6 +100,16 @@ export default function App() {
   const [editCount, setEditCount] = useState(0);
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+  // --- SECURITY GUARD: PREVENT "00" HACK ---
+  useEffect(() => {
+    // If a user is on the subjects or result screen, but has no valid index (-1),
+    // it means they bypassed the login. Kick them out.
+    if ((step === 'subjects' || step === 'result') && loginData.studentIndex === -1) {
+      setStep('login');
+      setToast({ show: true, message: 'Session invalid. Please login again.', type: 'error' });
+    }
+  }, [step, loginData.studentIndex]);
 
   // --- History Handling ---
   useEffect(() => {
@@ -224,6 +233,13 @@ export default function App() {
   };
 
   const calculateAndPublish = async () => {
+    // --- SECURITY GUARD: DOUBLE CHECK ---
+    if (!loginData.name || loginData.studentIndex === -1) {
+        setToast({ show: true, message: 'Security Error: User not identified', type: 'error' });
+        setStep('login');
+        return;
+    }
+
     setLoading(true);
     setCalculatedCGPA(liveCGPA);
     const suffix = (loginData.studentIndex + 1).toString().padStart(2, '0');
@@ -782,4 +798,5 @@ export default function App() {
     </div>
   );
 }
+
 
