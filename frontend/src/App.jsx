@@ -710,8 +710,8 @@ export default function App() {
 
                       <div className="space-y-1.5">
                         {filteredLeaderboard.map(item => {
-                          const globalRank = leaderboard.findIndex(r => r.regNo === item.regNo) + 1;
-                          const isMe = student?.regNo === item.regNo;
+                          const globalRank = leaderboard.findIndex(r => r.reg_no === item.reg_no) + 1;
+                          const isMe = student?.regNo === item.reg_no;
                           const cgpaVal = Number(item.cgpa).toFixed(2);
                           
 
