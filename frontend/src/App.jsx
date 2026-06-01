@@ -30,7 +30,10 @@ import {
   BookOpen,
   BarChart3,
   Settings,
-  Bell
+  Bell,
+  Zap as Lightning,
+  Award,
+  Flame as Fire
 } from "lucide-react";
 
 const API_URL =
@@ -541,10 +544,12 @@ export default function App() {
   };
 
   const filteredLeaderboard = useMemo(() => {
-    if (!searchQuery) return leaderboard;
+    if (!searchQuery.trim()) return leaderboard;
+    
+    const query = searchQuery.toLowerCase().trim();
     return leaderboard.filter(item =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.regNo.toLowerCase().includes(searchQuery.toLowerCase())
+      (item.name && item.name.toLowerCase().includes(query)) ||
+      (item.regNo && item.regNo.toLowerCase().includes(query))
     );
   }, [leaderboard, searchQuery]);
 
@@ -804,57 +809,6 @@ export default function App() {
 
         setLoading(false);
 
-      }
-    };
-
-  const handleEdit =
-    async () => {
-
-      if (
-        editCount >= 1
-      ) {
-
-        showToast(
-          "Edit limit reached",
-          "error"
-        );
-
-        return;
-      }
-
-      try {
-
-        const res =
-          await fetch(
-            `${API_URL}/results/edit-count`,
-            {
-              method: "PATCH",
-
-              headers: {
-                Authorization:
-                  `Bearer ${token}`
-              }
-            }
-          );
-
-        if (!res.ok) {
-          throw new Error();
-        }
-
-        setEditCount(
-          prev => prev + 1
-        );
-
-        navigateTo(
-          "subjects"
-        );
-
-      } catch {
-
-        showToast(
-          "Unable to edit result",
-          "error"
-        );
       }
     };
 
@@ -1407,190 +1361,111 @@ export default function App() {
         )}
 
         {step === "result" && (
-          <div className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden w-full gap-0">
+          <div className="flex-1 flex flex-col w-full h-full overflow-hidden">
 
-            {/* LEFT PANEL - Student Card */}
+            <div className="flex-1 flex flex-col lg:flex-row h-full gap-0 overflow-hidden">
 
-            <div className="w-full lg:w-[480px] xl:w-[520px] bg-gradient-to-b from-slate-900/60 to-slate-950 lg:border-r border-slate-700/50 flex flex-col p-6 shrink-0 space-y-4 overflow-y-auto custom-scrollbar">
+              {/* LEFT PANEL - Student Card */}
 
-              {/* Main Score Card */}
+              <div className="w-full lg:w-[500px] xl:w-[550px] bg-gradient-to-b from-slate-900/80 to-slate-950/90 backdrop-blur-sm lg:border-r border-slate-700/50 flex flex-col p-8 shrink-0 space-y-6 overflow-y-auto custom-scrollbar">
 
-              <div className="group relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 to-purple-600/30 rounded-3xl blur-xl group-hover:blur-2xl transition-all" />
-                
-                <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 p-8 rounded-3xl text-center overflow-hidden">
+                {/* Main Score Card */}
 
-                  <div className="absolute -top-16 -right-16 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl" />
-                  <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl" />
+                <div className="group relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-600/40 via-purple-600/40 to-pink-600/40 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500" />
+                  
+                  <div className="relative bg-gradient-to-br from-slate-800/40 via-slate-700/40 to-slate-800/40 border border-slate-600/50 backdrop-blur-xl p-8 rounded-3xl text-center overflow-hidden">
 
-                  <div className="relative z-10 space-y-4">
+                    <div className="absolute -top-20 -right-20 w-48 h-48 bg-blue-500/30 rounded-full blur-3xl" />
+                    <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl" />
 
-                    <div className="inline-block px-4 py-1.5 bg-blue-500/20 rounded-full border border-blue-500/30">
+                    <div className="relative z-10 space-y-6">
 
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-blue-300">
-
-                        Your Academic Profile
-                      </span>
-
-                    </div>
-
-                    <h2 className="text-3xl font-black text-white">
-
-                      {student?.name}
-
-                    </h2>
-
-                    <div className="text-slate-400 text-xs font-mono">
-
-                      {student?.regNo}
-
-                    </div>
-
-                    <div className="flex items-baseline justify-center gap-3 py-6">
-
-                      <span className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 drop-shadow-lg">
-
-                        {calculatedCGPA}
-
-                      </span>
-
-                      <span className="text-2xl font-bold text-slate-300">
-
-                        CGPA
-
-                      </span>
-
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 pt-4">
-
-                      <div className="bg-slate-900/50 rounded-xl p-3 border border-slate-700/50">
-
-                        <div className="flex items-center justify-center gap-2 mb-1">
-                          <Crown className="w-4 h-4 text-yellow-400" />
-                          <span className="text-2xl font-black text-white">
-
-                            #{getRank()}
-
-                          </span>
-                        </div>
-
-                        <div className="text-[10px] uppercase text-slate-400 font-semibold">
-
-                          Class Rank
-                        </div>
-
+                      <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full border border-blue-400/30">
+                        <span className="text-[12px] font-bold uppercase tracking-widest text-blue-200">
+                          ⭐ Your Results
+                        </span>
                       </div>
 
-                      <div className="bg-slate-900/50 rounded-xl p-3 border border-slate-700/50">
+                      <div>
+                        <p className="text-sm text-slate-300 mb-1">{student?.name}</p>
+                        <p className="text-xs text-slate-500 font-mono">{student?.regNo}</p>
+                      </div>
 
-                        <div className="flex items-center justify-center gap-2 mb-1">
-                          <TrendingUp className="w-4 h-4 text-green-400" />
-                          <span className="text-2xl font-black text-white">
+                      <div className="flex items-center justify-center gap-4 py-8">
+                        <div className="text-right">
+                          <p className="text-6xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-blue-300 via-purple-300 to-pink-300 drop-shadow-xl">
+                            {calculatedCGPA}
+                          </p>
+                          <p className="text-sm font-bold text-slate-400 mt-2">CGPA Score</p>
+                        </div>
+                      </div>
 
-                            {classStats.topPercent}%
-
-                          </span>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/10 rounded-2xl p-4 border border-yellow-500/30 text-center">
+                          <div className="flex items-center justify-center gap-2 mb-2">
+                            <Crown className="w-5 h-5 text-yellow-400" />
+                            <span className="text-3xl font-black text-white">#{getRank()}</span>
+                          </div>
+                          <p className="text-[11px] uppercase text-yellow-300 font-bold">Class Rank</p>
                         </div>
 
-                        <div className="text-[10px] uppercase text-slate-400 font-semibold">
-
-                          Percentile
-
+                        <div className="bg-gradient-to-br from-emerald-500/20 to-teal-500/10 rounded-2xl p-4 border border-emerald-500/30 text-center">
+                          <div className="flex items-center justify-center gap-2 mb-2">
+                            <TrendingUp className="w-5 h-5 text-emerald-400" />
+                            <span className="text-3xl font-black text-white">{classStats.topPercent}%</span>
+                          </div>
+                          <p className="text-[11px] uppercase text-emerald-300 font-bold">Percentile</p>
                         </div>
-
                       </div>
 
                     </div>
 
                   </div>
-
-                </div>
-              </div>
-
-              {/* Stats Cards */}
-
-              <div className="grid grid-cols-2 gap-3">
-
-                <div className="group relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-blue-600/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition" />
-                  
-                  <div className="relative bg-slate-900/50 backdrop-blur border border-slate-700/50 p-4 rounded-xl text-center hover:border-blue-500/30 transition-all">
-
-                    <User className="w-6 h-6 mx-auto text-blue-400 mb-2" />
-
-                    <div className="text-2xl font-bold text-white">
-
-                      {leaderboard.length}
-
-                    </div>
-
-                    <div className="text-[10px] uppercase text-slate-400 font-semibold mt-1">
-
-                      Total Students
-
-                    </div>
-
-                  </div>
                 </div>
 
-                <div className="group relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition" />
-                  
-                  <div className="relative bg-slate-900/50 backdrop-blur border border-slate-700/50 p-4 rounded-xl text-center hover:border-yellow-500/30 transition-all">
+                {/* Stats Cards */}
 
-                    <Trophy className="w-6 h-6 mx-auto text-yellow-400 mb-2" />
+                <div className="grid grid-cols-2 gap-3">
 
-                    <div className="text-2xl font-bold text-white">
+                  <div className="group relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-blue-600/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-300" />
+                    
+                    <div className="relative bg-slate-900/50 backdrop-blur border border-slate-700/50 p-5 rounded-2xl text-center hover:border-blue-500/50 transition-all">
 
-                      {classStats.avg}
+                      <div className="text-4xl font-bold text-blue-300 mb-1">
+                        {leaderboard.length}
+                      </div>
 
-                    </div>
-
-                    <div className="text-[10px] uppercase text-slate-400 font-semibold mt-1">
-
-                      Class Avg CGPA
+                      <div className="text-[10px] uppercase text-slate-400 font-bold">Students</div>
 
                     </div>
-
                   </div>
+
+                  <div className="group relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/30 to-yellow-600/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-300" />
+                    
+                    <div className="relative bg-slate-900/50 backdrop-blur border border-slate-700/50 p-5 rounded-2xl text-center hover:border-yellow-500/50 transition-all">
+
+                      <div className="text-4xl font-bold text-yellow-300 mb-1">
+                        {classStats.avg}
+                      </div>
+
+                      <div className="text-[10px] uppercase text-slate-400 font-bold">Avg CGPA</div>
+
+                    </div>
+                  </div>
+
                 </div>
 
-              </div>
-
-              {/* Action Buttons */}
-
-              <div className="space-y-2 pt-2">
-
-                {editCount < 1 ? (
-
-                  <button
-                    onClick={handleEdit}
-                    className="group w-full h-12 bg-slate-900/50 hover:bg-blue-600/30 border border-slate-700/50 hover:border-blue-500/50 rounded-xl text-white flex items-center justify-center gap-2 transition-all font-semibold"
-                  >
-
-                    <Edit3 className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-
-                    Edit (1 Attempt Left)
-
-                  </button>
-
-                ) : (
-
-                  <div className="w-full h-12 bg-slate-900/30 rounded-xl border border-slate-700/50 text-slate-500 flex items-center justify-center font-semibold text-sm">
-
-                    ✓ Results Locked
-
-                  </div>
-
-                )}
+                {/* Logout Button */}
 
                 <button
                   onClick={logout}
-                  className="group w-full h-12 bg-red-500/20 hover:bg-red-600/30 border border-red-500/50 hover:border-red-400/50 rounded-xl text-red-200 font-semibold flex items-center justify-center gap-2 transition-all"
+                  className="w-full h-12 bg-gradient-to-r from-red-600/30 to-red-700/30 hover:from-red-600/50 hover:to-red-700/50 border border-red-500/50 hover:border-red-400/50 rounded-xl text-red-300 font-bold flex items-center justify-center gap-2 transition-all mt-auto"
                 >
 
-                  <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                  <LogOut className="w-4 h-4" />
 
                   Logout
 
@@ -1598,157 +1473,171 @@ export default function App() {
 
               </div>
 
-            </div>
+              {/* RIGHT PANEL - Modern Leaderboard */}
 
-            {/* RIGHT PANEL - Modern Leaderboard */}
+              <div className="flex-1 flex flex-col bg-gradient-to-br from-slate-900/50 to-slate-950/80 backdrop-blur-sm overflow-hidden">
 
-            <div className="flex-1 flex flex-col bg-gradient-to-br from-slate-900/40 to-slate-950 overflow-hidden">
+                {/* Leaderboard Header */}
+                <div className="px-6 py-6 border-b border-slate-700/50 backdrop-blur-md space-y-4 flex-shrink-0">
 
-              <div className="px-6 py-6 border-b border-slate-700/50 backdrop-blur-sm space-y-4">
+                  <div className="flex items-center gap-3">
 
-                <div className="flex items-center gap-3 mb-4">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/30 to-pink-500/30 border border-slate-700/50">
 
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-slate-700/50">
+                      <Trophy className="w-6 h-6 text-purple-300" />
 
-                    <Crown className="w-5 h-5 text-blue-300" />
+                    </div>
+
+                    <div>
+
+                      <h3 className="font-bold text-xl text-white">
+
+                        Elite Leaderboard
+                      </h3>
+
+                      <p className="text-xs text-slate-400 font-semibold">
+
+                        Real-time Rankings
+                      </p>
+
+                    </div>
 
                   </div>
 
-                  <div>
-
-                    <h3 className="font-bold text-lg text-white">
-
-                      Live Leaderboard
-
-                    </h3>
-
-                    <p className="text-xs text-slate-400 font-semibold">
-
-                      Top Performers
-                    </p>
-
+                  {/* Search Bar */}
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="Search student or reg number..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full h-11 pl-11 pr-4 bg-slate-900/60 border border-slate-700/50 rounded-lg text-sm text-white placeholder-slate-500 outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                    />
                   </div>
 
                 </div>
 
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  <input
-                    type="text"
-                    placeholder="Search by name or registration..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full h-10 pl-10 pr-4 bg-slate-900/50 border border-slate-700/50 rounded-lg text-sm text-white placeholder-slate-500 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                  />
-                </div>
+                {/* Leaderboard Content */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar">
 
-              </div>
+                  <div className="px-4 sm:px-6 py-4 space-y-3">
 
-              <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 custom-scrollbar">
+                    {filteredLeaderboard.length > 0 ? (
+                      filteredLeaderboard.map((studentItem, idx) => {
 
-                <div className="space-y-2">
+                        const globalRank = leaderboard.findIndex(item => item.regNo === studentItem.regNo) + 1;
+                        const isMe = student?.regNo === studentItem.regNo;
+                        const cgpaValue = Number(studentItem.cgpa).toFixed(2);
+                        const isTopThree = globalRank <= 3;
 
-                  {filteredLeaderboard.length > 0 ? (
-                    filteredLeaderboard.map((studentItem, idx) => {
-
-                      const isMe = student?.regNo === studentItem.regNo;
-                      const globalRank = leaderboard.findIndex(item => item.regNo === studentItem.regNo) + 1;
-
-                      return (
-
-                        <div
-                          key={studentItem.regNo}
-                          className={`group relative transition-all ${isMe
-                            ? "scale-100"
-                            : "hover:scale-100"
-                            }`}
-                        >
-                          <div className={`absolute inset-0 rounded-xl blur opacity-0 group-hover:opacity-100 transition ${isMe
-                            ? "bg-gradient-to-r from-blue-600/50 to-purple-600/50 opacity-100"
-                            : "bg-slate-700/20"
-                            }`} />
+                        return (
 
                           <div
-                            className={`relative flex items-center justify-between p-4 rounded-xl border transition-all ${isMe
-                              ? "bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-blue-500/50 shadow-lg shadow-blue-500/20"
-                              : "bg-slate-900/40 border-slate-700/50 group-hover:border-slate-600/50"
-                              }`}
+                            key={studentItem.regNo}
+                            className={`group relative transition-all duration-300 ${isMe ? "scale-100" : ""}`}
                           >
+                            {isMe && (
+                              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 to-purple-600/30 rounded-2xl blur" />
+                            )}
 
-                            <div className="flex items-center gap-4 flex-1 min-w-0">
+                            <div
+                              className={`relative flex items-center justify-between p-5 rounded-2xl border backdrop-blur transition-all duration-300 ${
+                                isMe
+                                  ? "bg-gradient-to-r from-blue-600/25 to-purple-600/25 border-blue-500/60 shadow-lg shadow-blue-500/20"
+                                  : isTopThree
+                                  ? "bg-gradient-to-r from-slate-800/60 to-slate-700/40 border-slate-700/70 hover:border-slate-600/70"
+                                  : "bg-slate-900/40 border-slate-700/50 hover:border-slate-600/50 group-hover:bg-slate-900/60"
+                              }`}
+                            >
 
-                              <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center font-bold text-sm rounded-lg bg-slate-900/50 border border-slate-700/50">
+                              {/* Rank Badge */}
+                              <div className="flex items-center gap-4 flex-1 min-w-0">
 
-                                {globalRank === 1 ? (
-                                  <Crown className="w-5 h-5 text-yellow-400" />
-                                ) : globalRank === 2 ? (
-                                  <Medal className="w-5 h-5 text-slate-300" />
-                                ) : globalRank === 3 ? (
-                                  <Medal className="w-5 h-5 text-amber-600" />
-                                ) : (
-                                  <span className="text-slate-300">
+                                <div className={`w-12 h-12 flex-shrink-0 flex items-center justify-center font-bold text-sm rounded-xl border transition-all ${
+                                  globalRank === 1
+                                    ? "bg-gradient-to-br from-yellow-500/40 to-orange-500/30 border-yellow-500/50 text-yellow-300"
+                                    : globalRank === 2
+                                    ? "bg-gradient-to-br from-slate-400/40 to-slate-300/30 border-slate-400/50 text-slate-200"
+                                    : globalRank === 3
+                                    ? "bg-gradient-to-br from-amber-600/40 to-amber-700/30 border-amber-600/50 text-amber-300"
+                                    : "bg-slate-800/60 border-slate-700/50 text-slate-400"
+                                }`}>
 
-                                    {globalRank}
-
-                                  </span>
-                                )}
-
-                              </div>
-
-                              <div className="flex-1 min-w-0">
-
-                                <div className="font-bold text-white text-sm truncate">
-
-                                  {studentItem.name}
+                                  {globalRank === 1 ? (
+                                    <Crown className="w-6 h-6" />
+                                  ) : globalRank === 2 ? (
+                                    <Medal className="w-6 h-6" />
+                                  ) : globalRank === 3 ? (
+                                    <Medal className="w-6 h-6" />
+                                  ) : (
+                                    <span className="font-bold text-lg">{globalRank}</span>
+                                  )}
 
                                 </div>
 
-                                <div className="text-[10px] text-slate-500 font-mono">
+                                {/* Student Info */}
+                                <div className="flex-1 min-w-0">
 
-                                  {studentItem.regNo}
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <h4 className="font-bold text-white text-base truncate">
 
-                                </div>
+                                      {studentItem.name}
 
-                                {isMe && (
-
-                                  <div className="text-[10px] uppercase text-blue-300 font-bold mt-1">
-
-                                    ⭐ Your Position
+                                    </h4>
+                                    {isMe && (
+                                      <span className="flex-shrink-0 px-2 py-1 bg-blue-500/30 border border-blue-400/50 rounded text-[10px] font-bold text-blue-300">
+                                        You
+                                      </span>
+                                    )}
                                   </div>
 
-                                )}
+                                  <p className="text-[11px] text-slate-500 font-mono">
+
+                                    {studentItem.regNo}
+
+                                  </p>
+
+                                </div>
 
                               </div>
 
-                            </div>
+                              {/* CGPA Score */}
+                              <div className="flex-shrink-0 ml-4">
+                                <div className={`text-right px-5 py-3 rounded-xl border-2 transition-all ${
+                                  isMe
+                                    ? "bg-blue-600/30 border-blue-400/60 text-blue-200"
+                                    : isTopThree
+                                    ? "bg-slate-800/60 border-slate-700/70 text-slate-300 group-hover:border-slate-600/70"
+                                    : "bg-slate-900/60 border-slate-800/50 text-slate-400"
+                                }`}>
 
-                            <div className="flex-shrink-0 ml-3">
-                              <div className="text-right">
-                                <div className={`font-mono font-bold text-lg px-3 py-1 rounded-lg transition-all ${isMe
-                                  ? "bg-blue-600/30 border border-blue-500/50 text-blue-300"
-                                  : "bg-slate-900/50 border border-slate-700/50 text-slate-300"
-                                  }`}>
+                                  <div className="text-2xl font-black">
+                                    {cgpaValue}
+                                  </div>
 
-                                  {Number(
-                                    studentItem.cgpa
-                                  ).toFixed(2)}
+                                  <div className="text-[10px] uppercase font-bold tracking-wider">
+                                    CGPA
+                                  </div>
 
                                 </div>
                               </div>
+
                             </div>
 
                           </div>
 
-                        </div>
+                        );
+                      })
+                    ) : (
+                      <div className="text-center py-16 text-slate-400">
+                        <Search className="w-12 h-12 mx-auto mb-4 opacity-30" />
+                        <p className="text-sm font-medium">No students found</p>
+                        <p className="text-xs text-slate-500 mt-1">Try a different search term</p>
+                      </div>
+                    )}
 
-                      );
-                    })
-                  ) : (
-                    <div className="text-center py-12 text-slate-400">
-                      <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <p className="text-sm">No results found</p>
-                    </div>
-                  )}
+                  </div>
 
                 </div>
 
@@ -1762,7 +1651,7 @@ export default function App() {
       </main>
 
 
-      <footer className="py-4 text-center border-t border-slate-700/50 bg-slate-950/60 backdrop-blur-xl relative z-20 text-[11px] font-semibold text-slate-500 uppercase tracking-widest">
+      <footer className="py-4 text-center border-t border-slate-700/50 bg-slate-950/80 backdrop-blur-xl relative z-20 text-[11px] font-semibold text-slate-500 uppercase tracking-widest flex-shrink-0">
 
         <div className="flex items-center justify-center gap-2">
 
