@@ -1041,7 +1041,7 @@ export default function App() {
                             e.target.value
                         })
                       }
-                      placeholder="ag5426@srmist.edu.in"
+                      placeholder="username@srmist.edu.in"
                       className="w-full h-14 px-4 bg-slate-950/50 border border-slate-800 rounded-xl text-white outline-none focus:border-blue-500"
                     />
 
