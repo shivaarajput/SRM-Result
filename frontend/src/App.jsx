@@ -20,7 +20,17 @@ import {
   ArrowRight,
   Medal,
   Grid,
-  User
+  User,
+  LogOut,
+  Sparkles,
+  TrendingUp,
+  Target,
+  Star,
+  Flame,
+  BookOpen,
+  BarChart3,
+  Settings,
+  Bell
 } from "lucide-react";
 
 const API_URL =
@@ -33,42 +43,48 @@ const SUBJECTS_CORE = [
     name: "Data Analysis Using Python Programming",
     credits: 4,
     badge: "Python Master",
-    icon: "🐍"
+    icon: "🐍",
+    color: "from-blue-500 to-cyan-500"
   },
   {
     id: "optimization",
     name: "Optimization Techniques",
     credits: 4,
     badge: "Problem Solver",
-    icon: "📈"
+    icon: "📈",
+    color: "from-emerald-500 to-teal-500"
   },
   {
     id: "aos",
     name: "Advanced Operating System",
     credits: 4,
     badge: "System Architect",
-    icon: "💻"
+    icon: "💻",
+    color: "from-orange-500 to-red-500"
   },
   {
     id: "aiml",
     name: "Artificial Intelligence and Machine Learning",
     credits: 4,
     badge: "AI Engineer",
-    icon: "🤖"
+    icon: "🤖",
+    color: "from-purple-500 to-pink-500"
   },
   {
     id: "iot",
     name: "Internet of Things (IoT)",
     credits: 4,
     badge: "IoT Innovator",
-    icon: "🌐"
+    icon: "🌐",
+    color: "from-indigo-500 to-blue-500"
   },
   {
     id: "softskills",
     name: "Soft Skills and Verbal Mastery",
     credits: 2,
     badge: "Communicator",
-    icon: "🎤"
+    icon: "🎤",
+    color: "from-rose-500 to-pink-500"
   }
 ];
 
@@ -79,7 +95,8 @@ const ELECTIVES = [
     name: "Data Visualization Techniques",
     credits: 4,
     badge: "Data Artist",
-    icon: "📊"
+    icon: "📊",
+    color: "from-violet-500 to-purple-500"
   }
 ];
 
@@ -94,13 +111,13 @@ const GRADE_POINTS = {
 };
 
 const GRADE_COLORS = {
-  O: "text-yellow-400 bg-yellow-400/10 border-yellow-400/50 hover:bg-yellow-400/20",
-  "A+": "text-emerald-400 bg-emerald-400/10 border-emerald-400/50 hover:bg-emerald-400/20",
-  A: "text-green-400 bg-green-400/10 border-green-400/50 hover:bg-green-400/20",
-  "B+": "text-cyan-400 bg-cyan-400/10 border-cyan-400/50 hover:bg-cyan-400/20",
-  B: "text-blue-400 bg-blue-400/10 border-blue-400/50 hover:bg-blue-400/20",
-  C: "text-orange-400 bg-orange-400/10 border-orange-400/50 hover:bg-orange-400/20",
-  F: "text-red-400 bg-red-400/10 border-red-400/50 hover:bg-red-400/20"
+  O: "text-yellow-300 bg-gradient-to-br from-yellow-500/20 to-amber-500/10 border-yellow-400/50 hover:from-yellow-500/30 hover:to-amber-500/20",
+  "A+": "text-emerald-300 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border-emerald-400/50 hover:from-emerald-500/30 hover:to-teal-500/20",
+  A: "text-green-300 bg-gradient-to-br from-green-500/20 to-emerald-500/10 border-green-400/50 hover:from-green-500/30 hover:to-emerald-500/20",
+  "B+": "text-sky-300 bg-gradient-to-br from-sky-500/20 to-blue-500/10 border-sky-400/50 hover:from-sky-500/30 hover:to-blue-500/20",
+  B: "text-blue-300 bg-gradient-to-br from-blue-500/20 to-indigo-500/10 border-blue-400/50 hover:from-blue-500/30 hover:to-indigo-500/20",
+  C: "text-orange-300 bg-gradient-to-br from-orange-500/20 to-red-500/10 border-orange-400/50 hover:from-orange-500/30 hover:to-red-500/20",
+  F: "text-red-300 bg-gradient-to-br from-red-500/20 to-pink-500/10 border-red-400/50 hover:from-red-500/30 hover:to-pink-500/20"
 };
 
 const Toast = ({
@@ -127,16 +144,16 @@ const Toast = ({
     <div
       className={`fixed top-6 left-1/2 -translate-x-1/2 z-[150]
       w-[90%] max-w-sm flex items-center gap-3 px-4 py-3
-      rounded-xl shadow-2xl backdrop-blur-md border
+      rounded-2xl shadow-2xl backdrop-blur-xl border
       ${type === "error"
-          ? "bg-red-900/90 border-red-500/50"
-          : "bg-emerald-900/90 border-emerald-500/50"
+          ? "bg-red-500/20 border-red-400/50 text-red-200"
+          : "bg-emerald-500/20 border-emerald-400/50 text-emerald-200"
         }`}
     >
       {type === "error" ? (
-        <XCircle className="w-5 h-5" />
+        <XCircle className="w-5 h-5 flex-shrink-0" />
       ) : (
-        <CheckCircle className="w-5 h-5" />
+        <CheckCircle className="w-5 h-5 flex-shrink-0" />
       )}
 
       <span className="text-sm font-semibold">
@@ -224,6 +241,9 @@ export default function App() {
   const [leaderboard,
     setLeaderboard] =
     useState([]);
+
+  const [searchQuery, setSearchQuery] =
+    useState("");
 
   // ----------------------
   // UI
@@ -519,6 +539,14 @@ export default function App() {
       ? idx + 1
       : "-";
   };
+
+  const filteredLeaderboard = useMemo(() => {
+    if (!searchQuery) return leaderboard;
+    return leaderboard.filter(item =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.regNo.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [leaderboard, searchQuery]);
 
   const handleLoginSubmit =
     async () => {
@@ -909,19 +937,26 @@ export default function App() {
     !student
   ) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-black flex flex-col items-center justify-center gap-4 relative overflow-hidden">
 
-        <div className="w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl" />
+          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl" />
+        </div>
 
-        <p className="text-slate-400 text-sm">
-          Loading...
-        </p>
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="w-16 h-16 border-4 border-transparent border-t-blue-500 border-r-purple-500 rounded-full animate-spin" />
+          <p className="text-slate-400 text-sm font-medium">
+            Loading your academic journey...
+          </p>
+        </div>
 
       </div>
     );
   }
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-black text-slate-100 font-sans flex flex-col overflow-hidden relative">
 
       <Toast
         show={toast.show}
@@ -935,97 +970,116 @@ export default function App() {
         }
       />
 
-      {/* Background */}
-      <div className="fixed inset-0 pointer-events-none">
-
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-900/10 via-slate-900/50 to-slate-950" />
-
-        <div className="absolute -top-[20%] -right-[20%] w-[80%] h-[50%] bg-indigo-600/10 rounded-full blur-[120px]" />
-
-        <div className="absolute bottom-0 left-0 w-[40%] h-[40%] bg-blue-600/5 rounded-full blur-[100px]" />
-
+      {/* Animated Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600/20 rounded-full mix-blend-multiply filter blur-3xl animate-blob" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/20 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000" />
+        <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-cyan-600/20 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000" />
       </div>
 
       {/* Header */}
 
-      <header className="px-6 py-4 relative z-20 flex items-center justify-between backdrop-blur-md bg-slate-950/80 border-b border-white/5">
+      <header className="px-6 py-5 relative z-20 flex items-center justify-between backdrop-blur-xl bg-slate-950/60 border-b border-slate-700/50">
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
 
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-lg">
-
-            <GraduationCap className="text-white w-5 h-5" />
-
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-75" />
+            <div className="relative bg-slate-950 p-3 rounded-xl">
+              <GraduationCap className="text-blue-400 w-6 h-6" />
+            </div>
           </div>
 
           <div>
 
-            <h1 className="font-bold text-lg text-white">
-              SRM Result
+            <h1 className="font-bold text-xl text-white">
+              SRM Academic Portal
             </h1>
 
-            <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-              MCA Core • 2025
+            <p className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">
+              MCA Excellence • 2025
             </p>
 
           </div>
 
         </div>
 
+        {student && (
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="text-sm font-semibold text-white">{student.name}</p>
+              <p className="text-xs text-slate-400">{student.regNo}</p>
+            </div>
+          </div>
+        )}
+
       </header>
 
-      <main className="flex-1 relative z-10">
+      <main className="flex-1 relative z-10 overflow-hidden">
         {step === "login" && (
           <div className="flex items-center justify-center min-h-full p-4">
 
-            <div className="w-full max-w-5xl grid lg:grid-cols-2 gap-12 items-center">
+            <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-16 items-center">
 
-              {/* Left */}
+              {/* Left - Hero Section */}
 
-              <div className="text-center lg:text-left">
+              <div className="text-center lg:text-left space-y-8">
 
-                <div className="inline-flex p-4 rounded-full bg-slate-900 border border-slate-800 mb-6">
+                <div className="space-y-4">
+                  <div className="inline-block">
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 w-fit">
+                      <Flame className="w-4 h-4 text-orange-400" />
+                      <span className="text-xs font-semibold text-blue-300">Live Rankings Active</span>
+                    </div>
+                  </div>
 
-                  <Crown className="w-10 h-10 text-yellow-500" />
+                  <h2 className="text-6xl lg:text-7xl font-black text-white leading-tight">
 
+                    Compete & Excel
+
+                  </h2>
+
+                  <p className="text-xl text-slate-300 leading-relaxed max-w-lg">
+
+                    Track your CGPA in real-time, compete with classmates, and climb the leaderboard. Your academic excellence starts here.
+
+                  </p>
                 </div>
 
-                <h2 className="text-5xl font-black text-white leading-tight">
-
-                  Class Rank
-
-                  <br />
-
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
-
-                    Leaderboard
-
-                  </span>
-
-                </h2>
-
-                <p className="text-slate-400 mt-4 max-w-md">
-
-                  Enter your official email and
-                  registration number to
-                  calculate your CGPA and
-                  view your class ranking.
-
-                </p>
+                <div className="flex flex-wrap gap-4">
+                  <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
+                    <TrendingUp className="w-5 h-5 text-blue-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Live CGPA</p>
+                      <p className="text-sm font-bold text-white">Calculator</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
+                    <Target className="w-5 h-5 text-purple-400" />
+                    <div>
+                      <p className="text-xs text-slate-400">Class</p>
+                      <p className="text-sm font-bold text-white">Rankings</p>
+                    </div>
+                  </div>
+                </div>
 
               </div>
 
-              {/* Right */}
+              {/* Right - Login Form */}
 
-              <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000" />
+                
+                <div className="relative bg-slate-950/80 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 space-y-6">
 
-                <div className="space-y-5">
-
-                  {/* Email */}
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-2">Login to Portal</h3>
+                    <p className="text-sm text-slate-400">Enter your SRM credentials</p>
+                  </div>
 
                   <div>
 
-                    <label className="block text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-bold text-blue-300 uppercase tracking-wider mb-3">
 
                       Official Email
 
@@ -1041,17 +1095,15 @@ export default function App() {
                             e.target.value
                         })
                       }
-                      placeholder="username@srmist.edu.in"
-                      className="w-full h-14 px-4 bg-slate-950/50 border border-slate-800 rounded-xl text-white outline-none focus:border-blue-500"
+                      placeholder="you@srmist.edu.in"
+                      className="w-full h-14 px-4 bg-slate-900/50 border border-slate-700/50 rounded-xl text-white placeholder-slate-500 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
                     />
 
                   </div>
 
-                  {/* Registration */}
-
                   <div>
 
-                    <label className="block text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-bold text-purple-300 uppercase tracking-wider mb-3">
 
                       Registration Number
 
@@ -1068,35 +1120,33 @@ export default function App() {
                         })
                       }
                       placeholder="RA2532241030001"
-                      className="w-full h-14 px-4 bg-slate-950/50 border border-slate-800 rounded-xl text-white outline-none focus:border-emerald-500"
+                      className="w-full h-14 px-4 bg-slate-900/50 border border-slate-700/50 rounded-xl text-white placeholder-slate-500 outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
                     />
 
                   </div>
-
-                  {/* Login */}
 
                   <button
                     onClick={
                       handleLoginSubmit
                     }
                     disabled={loading}
-                    className="w-full h-14 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold text-white flex items-center justify-center gap-2"
+                    className="w-full h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-purple-500/50 disabled:opacity-50 group/btn"
                   >
 
                     {loading ? (
                       <Loader className="w-5 h-5 animate-spin" />
                     ) : (
                       <>
-                        Check Result
+                        <Sparkles className="w-4 h-4" />
+                        View Results
 
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                       </>
                     )}
 
                   </button>
 
                 </div>
-
               </div>
 
             </div>
@@ -1107,61 +1157,62 @@ export default function App() {
         {step === "subjects" && (
           <div className="flex-1 flex flex-col h-full overflow-hidden w-full max-w-7xl mx-auto px-4 lg:px-6">
 
-            {/* CGPA BAR */}
+            {/* CGPA Bar */}
 
-            <div className="py-4 flex-shrink-0">
+            <div className="py-6 flex-shrink-0">
 
-              <div className="bg-gradient-to-r from-slate-900 to-slate-900/80 backdrop-blur-md border border-white/10 rounded-2xl p-4 lg:px-8 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl blur" />
+                
+                <div className="relative bg-gradient-to-r from-slate-900/40 to-slate-800/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
 
-                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4">
 
-                  <div className="h-12 w-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                    <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-slate-700/50 flex items-center justify-center">
 
-                    <Calculator className="w-6 h-6 text-blue-400" />
-
-                  </div>
-
-                  <div>
-
-                    <div className="text-xs text-slate-400 uppercase font-bold">
-
-                      Current Student
+                      <Calculator className="w-7 h-7 text-blue-300" />
 
                     </div>
 
-                    <div className="text-white font-medium">
+                    <div>
 
-                      {student?.name}
+                      <div className="text-xs text-slate-400 uppercase font-bold tracking-wide">
 
+                        Current Grade Entry
+
+                      </div>
+
+                      <div className="text-white font-bold text-lg">
+
+                        {student?.name}
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <div className="flex items-center gap-4 bg-slate-950/50 rounded-xl px-6 py-3 border border-slate-700/50 backdrop-blur">
+
+                    <div>
+                      <p className="text-xs text-slate-400 uppercase font-bold">Live CGPA</p>
+                      <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+
+                        {liveCGPA}
+
+                      </p>
                     </div>
 
                   </div>
 
                 </div>
-
-                <div className="flex items-center gap-3 bg-slate-950/50 rounded-xl px-4 py-2 border border-white/5">
-
-                  <span className="text-xs text-slate-400 uppercase font-bold">
-
-                    Live CGPA
-
-                  </span>
-
-                  <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
-
-                    {liveCGPA}
-
-                  </span>
-
-                </div>
-
               </div>
 
             </div>
 
-            {/* SUBJECT GRID */}
+            {/* Subject Grid */}
 
-            <div className="flex-1 overflow-y-auto pb-6">
+            <div className="flex-1 overflow-y-auto pb-6 custom-scrollbar">
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
@@ -1169,46 +1220,127 @@ export default function App() {
 
                   <div
                     key={sub.id}
-                    className="bg-slate-900/60 border border-slate-800 hover:border-slate-700 p-5 rounded-2xl transition-all"
+                    className="group relative"
                   >
+                    <div className={`absolute inset-0 bg-gradient-to-r ${sub.color} rounded-2xl blur opacity-20 group-hover:opacity-30 transition`} />
+                    
+                    <div className="relative bg-gradient-to-br from-slate-900/80 to-slate-800/40 border border-slate-700/50 backdrop-blur hover:border-slate-600/50 p-6 rounded-2xl transition-all">
 
-                    <div className="flex justify-between mb-4">
+                      <div className="flex justify-between mb-4">
 
-                      <div className="flex gap-3">
+                        <div className="flex gap-3">
 
-                        <span className="text-2xl">
+                          <span className="text-3xl group-hover:scale-110 transition-transform">
 
-                          {sub.icon}
+                            {sub.icon}
 
-                        </span>
+                          </span>
 
-                        <div>
+                          <div>
 
-                          <h3 className="text-sm font-bold text-slate-200">
+                            <h3 className="text-sm font-bold text-white">
 
-                            {sub.name}
+                              {sub.name}
 
-                          </h3>
+                            </h3>
 
-                          <div className="text-[10px] text-slate-500">
+                            <div className="text-[11px] text-slate-400 font-semibold mt-1">
 
-                            {sub.badge}
+                              {sub.badge}
+
+                            </div>
 
                           </div>
 
                         </div>
 
+                        <span className="text-[11px] font-bold text-slate-300 bg-slate-950/50 px-3 py-1 rounded-lg">
+
+                          {sub.credits} Cr
+
+                        </span>
+
                       </div>
 
-                      <span className="text-[10px] font-bold text-slate-500 bg-slate-950 px-2 py-1 rounded">
+                      <div className="grid grid-cols-7 gap-1.5">
 
-                        {sub.credits} Credits
+                        {Object.keys(
+                          GRADE_POINTS
+                        ).map(g => (
 
-                      </span>
+                          <button
+                            key={g}
+                            onClick={() =>
+                              setGrades({
+                                ...grades,
+                                [sub.id]: g
+                              })
+                            }
+                            className={`h-10 rounded-lg text-xs font-bold transition-all border ${grades[sub.id] === g
+                              ? GRADE_COLORS[g] + " border-current"
+                              : "bg-slate-950/30 text-slate-500 border-slate-700/50 hover:border-slate-600/50"
+                              }`}
+                          >
+                            {g}
+                          </button>
+
+                        ))}
+
+                      </div>
+
+                    </div>
+                  </div>
+
+                ))}
+
+                {/* ELECTIVE */}
+
+                <div className="group relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-purple-600/20 rounded-2xl blur" />
+                  
+                  <div className="relative bg-gradient-to-br from-slate-900/80 to-slate-800/40 border border-slate-700/50 backdrop-blur p-6 rounded-2xl">
+
+                    <label className="text-xs font-bold text-violet-300 uppercase tracking-wider mb-4 block">
+
+                      Choose Elective Subject
+
+                    </label>
+
+                    <div className="flex flex-col gap-3 mb-4">
+
+                      {ELECTIVES.map(ele => (
+
+                        <button
+                          key={ele.id}
+                          onClick={() =>
+                            setElective(ele.id)
+                          }
+                          className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${elective === ele.id
+                            ? "bg-violet-500/20 border-violet-400/50 shadow-lg shadow-violet-500/20"
+                            : "bg-slate-950/30 border-slate-700/50 hover:border-slate-600/50"
+                            }`}
+                        >
+
+                          <div
+                            className={`w-4 h-4 rounded-full border-2 transition-all ${elective === ele.id
+                              ? "border-violet-300 bg-violet-500/30"
+                              : "border-slate-600"
+                              }`}
+                          />
+
+                          <span className="text-xs font-bold text-slate-200">
+
+                            {ele.name}
+
+                          </span>
+
+                        </button>
+
+                      ))}
 
                     </div>
 
-                    <div className="grid grid-cols-7 gap-1">
+                    <div className="grid grid-cols-7 gap-1.5">
 
                       {Object.keys(
                         GRADE_POINTS
@@ -1219,12 +1351,12 @@ export default function App() {
                           onClick={() =>
                             setGrades({
                               ...grades,
-                              [sub.id]: g
+                              [elective]: g
                             })
                           }
-                          className={`h-9 rounded-lg text-xs font-bold transition-all ${grades[sub.id] === g
-                            ? GRADE_COLORS[g]
-                            : "bg-slate-950 text-slate-600"
+                          className={`h-10 rounded-lg text-xs font-bold transition-all border ${grades[elective] === g
+                            ? GRADE_COLORS[g] + " border-current"
+                            : "bg-slate-950/30 text-slate-500 border-slate-700/50 hover:border-slate-600/50"
                             }`}
                         >
                           {g}
@@ -1235,100 +1367,37 @@ export default function App() {
                     </div>
 
                   </div>
-
-                ))}
-
-                {/* ELECTIVE */}
-
-                <div className="bg-indigo-900/10 border border-indigo-500/30 p-5 rounded-2xl">
-
-                  <label className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-3 block">
-
-                    Elective Subject
-
-                  </label>
-
-                  <div className="flex flex-col gap-2 mb-4">
-
-                    {ELECTIVES.map(ele => (
-
-                      <button
-                        key={ele.id}
-                        onClick={() =>
-                          setElective(ele.id)
-                        }
-                        className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${elective === ele.id
-                          ? "bg-indigo-500/20 border-indigo-500/50"
-                          : "bg-slate-950/50 border-slate-800"
-                          }`}
-                      >
-
-                        <div
-                          className={`w-4 h-4 rounded-full border-2 ${elective === ele.id
-                            ? "border-indigo-400"
-                            : "border-slate-600"
-                            }`}
-                        />
-
-                        <span className="text-xs font-bold">
-
-                          {ele.name}
-
-                        </span>
-
-                      </button>
-
-                    ))}
-
-                  </div>
-
-                  <div className="grid grid-cols-7 gap-1">
-
-                    {Object.keys(
-                      GRADE_POINTS
-                    ).map(g => (
-
-                      <button
-                        key={g}
-                        onClick={() =>
-                          setGrades({
-                            ...grades,
-                            [elective]: g
-                          })
-                        }
-                        className={`h-9 rounded-lg text-xs font-bold ${grades[elective] === g
-                          ? GRADE_COLORS[g]
-                          : "bg-slate-950/50 text-slate-600"
-                          }`}
-                      >
-                        {g}
-                      </button>
-
-                    ))}
-
-                  </div>
-
                 </div>
 
               </div>
 
             </div>
 
-            {/* SUBMIT */}
+            {/* Submit Button */}
 
-            <div className="py-4">
+            <div className="py-6 flex-shrink-0">
 
               <button
                 onClick={
                   calculateAndPublish
                 }
                 disabled={loading}
-                className="w-full md:w-1/2 lg:w-1/3 mx-auto block h-14 rounded-xl font-bold text-lg bg-gradient-to-r from-emerald-500 to-green-600 text-white"
+                className="w-full md:w-1/2 lg:w-1/3 mx-auto block h-14 rounded-xl font-bold text-lg bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white transition-all shadow-lg hover:shadow-green-500/50 disabled:opacity-50 flex items-center justify-center gap-2 group"
               >
 
                 {loading
-                  ? "Processing..."
-                  : "Lock Result & View Rank"}
+                  ? (
+                    <>
+                      <Loader className="w-5 h-5 animate-spin" />
+                      Processing...
+                    </>
+                  )
+                  : (
+                    <>
+                      <CheckCircle className="w-5 h-5" />
+                      Publish Results
+                    </>
+                  )}
 
               </button>
 
@@ -1338,53 +1407,54 @@ export default function App() {
         )}
 
         {step === "result" && (
-          <div className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden w-full">
+          <div className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden w-full gap-0">
 
-            {/* LEFT PANEL */}
+            {/* LEFT PANEL - Student Card */}
 
-            <div className="w-full lg:w-[400px] xl:w-[450px] bg-slate-950 lg:border-r border-white/5 flex flex-col p-6 shrink-0">
+            <div className="w-full lg:w-[480px] xl:w-[520px] bg-gradient-to-b from-slate-900/60 to-slate-950 lg:border-r border-slate-700/50 flex flex-col p-6 shrink-0 space-y-4 overflow-y-auto custom-scrollbar">
 
-              <div className="space-y-6">
+              {/* Main Score Card */}
 
-                {/* SCORE CARD */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 to-purple-600/30 rounded-3xl blur-xl group-hover:blur-2xl transition-all" />
+                
+                <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 p-8 rounded-3xl text-center overflow-hidden">
 
-                <div className="bg-gradient-to-br from-indigo-600 via-blue-700 to-blue-900 p-8 rounded-[2rem] shadow-2xl text-center relative overflow-hidden">
+                  <div className="absolute -top-16 -right-16 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl" />
+                  <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl" />
 
-                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
+                  <div className="relative z-10 space-y-4">
 
-                  <div className="relative z-10">
+                    <div className="inline-block px-4 py-1.5 bg-blue-500/20 rounded-full border border-blue-500/30">
 
-                    <div className="inline-block px-3 py-1 bg-white/10 rounded-full mb-4">
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-blue-300">
 
-                      <span className="text-[10px] font-bold uppercase tracking-widest">
-
-                        Official Score
-
+                        Your Academic Profile
                       </span>
 
                     </div>
 
-                    <h2 className="text-3xl font-black text-white mb-2">
+                    <h2 className="text-3xl font-black text-white">
 
                       {student?.name}
 
                     </h2>
 
-                    <div className="text-blue-200/60 text-xs font-mono mb-6">
+                    <div className="text-slate-400 text-xs font-mono">
 
                       {student?.regNo}
 
                     </div>
 
-                    <div className="flex items-baseline justify-center gap-2 mb-8">
+                    <div className="flex items-baseline justify-center gap-3 py-6">
 
-                      <span className="text-8xl font-black text-white">
+                      <span className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 drop-shadow-lg">
 
                         {calculatedCGPA}
 
                       </span>
 
-                      <span className="text-xl font-bold text-blue-200">
+                      <span className="text-2xl font-bold text-slate-300">
 
                         CGPA
 
@@ -1392,33 +1462,38 @@ export default function App() {
 
                     </div>
 
-                    <div className="bg-slate-950/30 rounded-2xl p-4 flex divide-x divide-white/10">
+                    <div className="grid grid-cols-2 gap-3 pt-4">
 
-                      <div className="flex-1">
+                      <div className="bg-slate-900/50 rounded-xl p-3 border border-slate-700/50">
 
-                        <div className="text-2xl font-black text-white">
+                        <div className="flex items-center justify-center gap-2 mb-1">
+                          <Crown className="w-4 h-4 text-yellow-400" />
+                          <span className="text-2xl font-black text-white">
 
-                          #{getRank()}
+                            #{getRank()}
 
+                          </span>
                         </div>
 
-                        <div className="text-[10px] uppercase text-blue-200">
+                        <div className="text-[10px] uppercase text-slate-400 font-semibold">
 
                           Class Rank
-
                         </div>
 
                       </div>
 
-                      <div className="flex-1">
+                      <div className="bg-slate-900/50 rounded-xl p-3 border border-slate-700/50">
 
-                        <div className="text-2xl font-black text-white">
+                        <div className="flex items-center justify-center gap-2 mb-1">
+                          <TrendingUp className="w-4 h-4 text-green-400" />
+                          <span className="text-2xl font-black text-white">
 
-                          {classStats.topPercent}%
+                            {classStats.topPercent}%
 
+                          </span>
                         </div>
 
-                        <div className="text-[10px] uppercase text-blue-200">
+                        <div className="text-[10px] uppercase text-slate-400 font-semibold">
 
                           Percentile
 
@@ -1431,14 +1506,18 @@ export default function App() {
                   </div>
 
                 </div>
+              </div>
 
-                {/* STATS */}
+              {/* Stats Cards */}
 
-                <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
 
-                  <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5 text-center">
+                <div className="group relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-blue-600/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition" />
+                  
+                  <div className="relative bg-slate-900/50 backdrop-blur border border-slate-700/50 p-4 rounded-xl text-center hover:border-blue-500/30 transition-all">
 
-                    <User className="w-6 h-6 mx-auto text-slate-500 mb-2" />
+                    <User className="w-6 h-6 mx-auto text-blue-400 mb-2" />
 
                     <div className="text-2xl font-bold text-white">
 
@@ -1446,17 +1525,21 @@ export default function App() {
 
                     </div>
 
-                    <div className="text-[10px] uppercase text-slate-500">
+                    <div className="text-[10px] uppercase text-slate-400 font-semibold mt-1">
 
-                      Participants
+                      Total Students
 
                     </div>
 
                   </div>
+                </div>
 
-                  <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5 text-center">
+                <div className="group relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition" />
+                  
+                  <div className="relative bg-slate-900/50 backdrop-blur border border-slate-700/50 p-4 rounded-xl text-center hover:border-yellow-500/30 transition-all">
 
-                    <Trophy className="w-6 h-6 mx-auto text-yellow-500 mb-2" />
+                    <Trophy className="w-6 h-6 mx-auto text-yellow-400 mb-2" />
 
                     <div className="text-2xl font-bold text-white">
 
@@ -1464,47 +1547,50 @@ export default function App() {
 
                     </div>
 
-                    <div className="text-[10px] uppercase text-slate-500">
+                    <div className="text-[10px] uppercase text-slate-400 font-semibold mt-1">
 
-                      Avg CGPA
+                      Class Avg CGPA
 
                     </div>
 
                   </div>
-
                 </div>
 
-                {/* EDIT */}
+              </div>
+
+              {/* Action Buttons */}
+
+              <div className="space-y-2 pt-2">
 
                 {editCount < 1 ? (
 
                   <button
                     onClick={handleEdit}
-                    className="w-full h-12 bg-slate-900 hover:bg-blue-600 rounded-xl border border-slate-800 text-white flex items-center justify-center gap-2"
+                    className="group w-full h-12 bg-slate-900/50 hover:bg-blue-600/30 border border-slate-700/50 hover:border-blue-500/50 rounded-xl text-white flex items-center justify-center gap-2 transition-all font-semibold"
                   >
 
-                    <Edit3 className="w-4 h-4" />
+                    <Edit3 className="w-4 h-4 group-hover:rotate-12 transition-transform" />
 
-                    Fix a Mistake (1 Left)
+                    Edit (1 Attempt Left)
 
                   </button>
 
                 ) : (
 
-                  <div className="w-full h-12 bg-slate-900/50 rounded-xl border border-slate-900 text-slate-600 flex items-center justify-center">
+                  <div className="w-full h-12 bg-slate-900/30 rounded-xl border border-slate-700/50 text-slate-500 flex items-center justify-center font-semibold text-sm">
 
-                    Score Locked
+                    ✓ Results Locked
 
                   </div>
 
                 )}
 
-                {/* LOGOUT */}
-
                 <button
                   onClick={logout}
-                  className="w-full h-12 bg-red-600 hover:bg-red-500 rounded-xl text-white font-bold"
+                  className="group w-full h-12 bg-red-500/20 hover:bg-red-600/30 border border-red-500/50 hover:border-red-400/50 rounded-xl text-red-200 font-semibold flex items-center justify-center gap-2 transition-all"
                 >
+
+                  <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
 
                   Logout
 
@@ -1514,116 +1600,154 @@ export default function App() {
 
             </div>
 
-            {/* RIGHT PANEL */}
+            {/* RIGHT PANEL - Modern Leaderboard */}
 
-            <div className="flex-1 flex flex-col bg-slate-950">
+            <div className="flex-1 flex flex-col bg-gradient-to-br from-slate-900/40 to-slate-950 overflow-hidden">
 
-              <div className="px-6 py-6 border-b border-white/5">
+              <div className="px-6 py-6 border-b border-slate-700/50 backdrop-blur-sm space-y-4">
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 mb-4">
 
-                  <Grid className="w-5 h-5 text-yellow-500" />
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-slate-700/50">
+
+                    <Crown className="w-5 h-5 text-blue-300" />
+
+                  </div>
 
                   <div>
 
                     <h3 className="font-bold text-lg text-white">
 
-                      Class Leaderboard
+                      Live Leaderboard
 
                     </h3>
 
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-400 font-semibold">
 
-                      Live Rankings
-
+                      Top Performers
                     </p>
 
                   </div>
 
                 </div>
 
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <input
+                    type="text"
+                    placeholder="Search by name or registration..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full h-10 pl-10 pr-4 bg-slate-900/50 border border-slate-700/50 rounded-lg text-sm text-white placeholder-slate-500 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  />
+                </div>
+
               </div>
 
-              <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
+              <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 custom-scrollbar">
 
-                <div className="grid gap-3">
+                <div className="space-y-2">
 
-                  {leaderboard.map(
-                    (
-                      studentItem,
-                      idx
-                    ) => {
+                  {filteredLeaderboard.length > 0 ? (
+                    filteredLeaderboard.map((studentItem, idx) => {
 
-                      const isMe =
-                        student?.regNo ===
-                        studentItem.regNo;
+                      const isMe = student?.regNo === studentItem.regNo;
+                      const globalRank = leaderboard.findIndex(item => item.regNo === studentItem.regNo) + 1;
 
                       return (
 
                         <div
-                          key={
-                            studentItem.regNo
-                          }
-                          className={`flex items-center justify-between p-4 rounded-xl border transition-all ${isMe
-                            ? "bg-blue-600/10 border-blue-500/40"
-                            : "bg-slate-900/40 border-slate-800"
+                          key={studentItem.regNo}
+                          className={`group relative transition-all ${isMe
+                            ? "scale-100"
+                            : "hover:scale-100"
                             }`}
                         >
+                          <div className={`absolute inset-0 rounded-xl blur opacity-0 group-hover:opacity-100 transition ${isMe
+                            ? "bg-gradient-to-r from-blue-600/50 to-purple-600/50 opacity-100"
+                            : "bg-slate-700/20"
+                            }`} />
 
-                          <div className="flex items-center gap-4">
+                          <div
+                            className={`relative flex items-center justify-between p-4 rounded-xl border transition-all ${isMe
+                              ? "bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-blue-500/50 shadow-lg shadow-blue-500/20"
+                              : "bg-slate-900/40 border-slate-700/50 group-hover:border-slate-600/50"
+                              }`}
+                          >
 
-                            <div className="w-8 h-8 flex items-center justify-center">
+                            <div className="flex items-center gap-4 flex-1 min-w-0">
 
-                              {idx === 0 ? (
-                                <Crown className="w-5 h-5 text-yellow-500" />
-                              ) : idx === 1 ? (
-                                <Medal className="w-5 h-5 text-slate-300" />
-                              ) : idx === 2 ? (
-                                <Medal className="w-5 h-5 text-amber-600" />
-                              ) : (
-                                <span className="text-slate-500 font-bold">
+                              <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center font-bold text-sm rounded-lg bg-slate-900/50 border border-slate-700/50">
 
-                                  {idx + 1}
+                                {globalRank === 1 ? (
+                                  <Crown className="w-5 h-5 text-yellow-400" />
+                                ) : globalRank === 2 ? (
+                                  <Medal className="w-5 h-5 text-slate-300" />
+                                ) : globalRank === 3 ? (
+                                  <Medal className="w-5 h-5 text-amber-600" />
+                                ) : (
+                                  <span className="text-slate-300">
 
-                                </span>
-                              )}
+                                    {globalRank}
 
-                            </div>
-
-                            <div>
-
-                              <div className="font-bold text-white">
-
-                                {studentItem.name}
+                                  </span>
+                                )}
 
                               </div>
 
-                              {isMe && (
+                              <div className="flex-1 min-w-0">
 
-                                <div className="text-[10px] uppercase text-blue-400 font-bold">
+                                <div className="font-bold text-white text-sm truncate">
 
-                                  You
+                                  {studentItem.name}
 
                                 </div>
 
-                              )}
+                                <div className="text-[10px] text-slate-500 font-mono">
+
+                                  {studentItem.regNo}
+
+                                </div>
+
+                                {isMe && (
+
+                                  <div className="text-[10px] uppercase text-blue-300 font-bold mt-1">
+
+                                    ⭐ Your Position
+                                  </div>
+
+                                )}
+
+                              </div>
 
                             </div>
 
-                          </div>
+                            <div className="flex-shrink-0 ml-3">
+                              <div className="text-right">
+                                <div className={`font-mono font-bold text-lg px-3 py-1 rounded-lg transition-all ${isMe
+                                  ? "bg-blue-600/30 border border-blue-500/50 text-blue-300"
+                                  : "bg-slate-900/50 border border-slate-700/50 text-slate-300"
+                                  }`}>
 
-                          <div className="font-mono font-bold text-sm px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300">
+                                  {Number(
+                                    studentItem.cgpa
+                                  ).toFixed(2)}
 
-                            {Number(
-                              studentItem.cgpa
-                            ).toFixed(2)}
+                                </div>
+                              </div>
+                            </div>
 
                           </div>
 
                         </div>
 
                       );
-                    }
+                    })
+                  ) : (
+                    <div className="text-center py-12 text-slate-400">
+                      <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">No results found</p>
+                    </div>
                   )}
 
                 </div>
@@ -1638,21 +1762,47 @@ export default function App() {
       </main>
 
 
-      <footer className="py-3 text-center border-t border-white/5 bg-slate-950 relative z-20 text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+      <footer className="py-4 text-center border-t border-slate-700/50 bg-slate-950/60 backdrop-blur-xl relative z-20 text-[11px] font-semibold text-slate-500 uppercase tracking-widest">
 
-        <div className="flex items-center justify-center gap-1.5">
+        <div className="flex items-center justify-center gap-2">
 
           <span>
-            Designed by Shiva
+            SRM Result Portal
           </span>
 
-          <Heart className="w-2.5 h-2.5 text-red-900 fill-red-900" />
+          <Heart className="w-3 h-3 text-red-500 fill-red-500 animate-pulse" />
+
+          <span>2025</span>
 
         </div>
 
       </footer>
 
       <style>{`
+
+      @keyframes blob {
+        0%, 100% {
+          transform: translate(0, 0) scale(1);
+        }
+        33% {
+          transform: translate(30px, -50px) scale(1.1);
+        }
+        66% {
+          transform: translate(-20px, 20px) scale(0.9);
+        }
+      }
+
+      .animate-blob {
+        animation: blob 7s infinite;
+      }
+
+      .animation-delay-2000 {
+        animation-delay: 2s;
+      }
+
+      .animation-delay-4000 {
+        animation-delay: 4s;
+      }
 
       .custom-scrollbar::-webkit-scrollbar {
         width: 6px;
@@ -1663,12 +1813,12 @@ export default function App() {
       }
 
       .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #334155;
+        background: rgba(71, 85, 105, 0.5);
         border-radius: 999px;
       }
 
       .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: #475569;
+        background: rgba(71, 85, 105, 0.8);
       }
 
       @keyframes fade-in-up {
