@@ -588,14 +588,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Edit button */}
-              <button
-                onClick={() => navigateTo("subjects")}
-                className="w-full h-9 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 hover:border-blue-400/50 rounded-xl text-blue-300 hover:text-blue-200 text-xs font-bold flex items-center justify-center gap-2 transition-all"
-              >
-                <Edit3 className="w-3.5 h-3.5" />
-                Edit Grades
-              </button>
+              
 
               {/* Logout */}
               <button
@@ -720,7 +713,7 @@ export default function App() {
                           const globalRank = leaderboard.findIndex(r => r.regNo === item.regNo) + 1;
                           const isMe = student?.regNo === item.regNo;
                           const cgpaVal = Number(item.cgpa).toFixed(2);
-                          const isTop3 = globalRank <= 3;
+                          
 
                           const rankColor =
                             globalRank === 1 ? "text-yellow-400 border-yellow-500/40 bg-yellow-500/10"  :
@@ -741,9 +734,7 @@ export default function App() {
 
                                 {/* Rank badge */}
                                 <div className={`w-8 h-8 flex-shrink-0 flex items-center justify-center text-xs font-bold rounded-lg border ${rankColor}`}>
-                                  {isTop3 && !searchQuery.trim()
-                                    ? ["🥇","🥈","🥉"][globalRank - 1]
-                                    : globalRank}
+                                  {globalRank}
                                 </div>
 
                                 {/* Info */}
