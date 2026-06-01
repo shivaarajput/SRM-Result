@@ -25,7 +25,7 @@ import {
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
-  "http://localhost:5000/api";
+  "https://srm-result-backend.vercel.app/api";
 
 const SUBJECTS_CORE = [
   {
